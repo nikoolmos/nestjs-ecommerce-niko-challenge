@@ -6,9 +6,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from '../user/user.module';
 import { User } from '../../database/entities/user.entity';
 import { Product } from 'src/database/entities/product.entity';
+import { RabbitMQModule } from '../rabbitmq/rabbitmq.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Product, Category]), UserModule],
+  imports: [TypeOrmModule.forFeature([User, Product, Category]), UserModule, RabbitMQModule],
   controllers: [ProductController],
   providers: [ProductService],
 })

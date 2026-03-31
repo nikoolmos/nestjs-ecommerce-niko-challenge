@@ -11,13 +11,21 @@ import { Product } from 'src/database/entities/product.entity';
 import { errorMessages } from 'src/errors/custom';
 import { validate } from 'class-validator';
 import { successObject } from 'src/common/helper/sucess-response.interceptor';
+import { ProducerService } from 'src/api/rabbitmq/producer.service';
 
 @Injectable()
 export class ProductService {
   constructor(
     @InjectEntityManager()
     private readonly entityManager: EntityManager,
+    private readonly producerService: ProducerService,
   ) {}
+
+  public async getAllProducts() {
+    const productRepo = this.entityManager.getRepository(Product);
+    const result = await productRepo.query('SELECT * FROM product WHERE true;')
+    return result;
+  }
 
   async getProduct(productId: number) {
     const product = await this.entityManager.findOne(Product, {
@@ -40,12 +48,17 @@ export class ProductService {
 
     if (!category) throw new NotFoundException(errorMessages.category.notFound);
 
-    const product = await this.entityManager.create(Product, {
+    const product = this.entityManager.create(Product, {
       category,
       merchantId,
+      title: data.title,
+      description: data.description,
     });
 
-    return this.entityManager.save(product);
+    const result = await this.entityManager.save(product);
+
+    this.producerService.sendMessage('PRODUCT_CREATED', product);
+    return result;
   }
 
   async addProductDetails(
@@ -109,8 +122,11 @@ export class ProductService {
       .andWhere('merchantId = :merchantId', { merchantId })
       .execute();
 
+
     if (result.affected < 1)
       throw new NotFoundException(errorMessages.product.notFound);
+
+    this.producerService.sendMessage('PRODUCT_DELETED', JSON.stringify(productId));
 
     return successObject;
   }

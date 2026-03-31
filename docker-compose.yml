@@ -6,7 +6,16 @@ services:
       POSTGRES_USER: hassan
       POSTGRES_PASSWORD: password
     volumes:
-      - ./database-data:/var/lib/postgresql/data/
+      - ./database-data:/var/lib/postgresql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - 5432:5432
+  rabbitmq:
+      image: rabbitmq
+      environment:
+        RABBITMQ_DEFAULT_USER: nicolas
+        RABBITMQ_DEFAULT_PASS: password
+      volumes:
+        - ./rabbitmq-data:/var/lib/rabbitmq/mnesia
+      ports:
+        - 5672:5672

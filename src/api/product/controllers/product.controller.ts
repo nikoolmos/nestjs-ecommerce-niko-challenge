@@ -16,13 +16,18 @@ export class ProductController {
     return this.productService.getProduct(product.id);
   }
 
+  @Get('/')
+  public async getAllProducts() {
+    return await this.productService.getAllProducts();
+  }
+
   @Auth(RoleIds.Admin, RoleIds.Merchant)
   @Post('create')
   async createProduct(
     @Body() body: CreateProductDto,
     @CurrentUser() user: User,
   ) {
-    return this.productService.createProduct(body, user.id);
+    return await this.productService.createProduct(body, user.id);
   }
 
   @Auth(RoleIds.Admin, RoleIds.Merchant)
@@ -44,7 +49,6 @@ export class ProductController {
     return this.productService.activateProduct(product.id, user.id);
   }
 
-  @Auth(RoleIds.Admin, RoleIds.Merchant)
   @Delete(':id')
   async deleteProduct(
     @Param() product: FindOneParams,
