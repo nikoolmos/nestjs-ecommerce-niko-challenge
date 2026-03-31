@@ -8,7 +8,7 @@ export const rabbitMQConfig = (): RmqOptions => ({
       hostname: 'localhost',
       port: 5672,
       username: 'ubuntu',
-      password: ''
+      password: '12345678'
     }], 
     queue: 'my_queue', 
     queueOptions: {
