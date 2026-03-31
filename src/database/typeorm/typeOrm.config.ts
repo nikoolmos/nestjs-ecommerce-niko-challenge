@@ -19,4 +19,10 @@ export const dataSourceOptions: DataSourceOptions = {
   logger: 'simple-console',
   synchronize: false, // never use TRUE in production!
   logging: true, // for debugging in dev Area only
+  ssl: true,
+  "extra": {
+    "ssl": {
+      "rejectUnauthorized": false
+    }
+  }
 };
