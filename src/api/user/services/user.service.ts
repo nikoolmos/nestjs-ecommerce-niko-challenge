@@ -31,13 +31,19 @@ export class UserService {
     email: string,
     relations?: UserRelation,
   ): Promise<User> {
-    const user: User = await this.repository.findOne({
-      where: {
-        email,
-      },
-      relations,
-    });
-    return user;
+    try {
+
+      const user: User = await this.repository.findOne({
+        where: {
+          email,
+        },
+        relations,
+      });
+      return user;
+    } catch (error) {
+      console.error('Cant find user', error);
+      throw error;
+    }
   }
 
   public async comparePassword(password, userPassword): Promise<boolean> {
